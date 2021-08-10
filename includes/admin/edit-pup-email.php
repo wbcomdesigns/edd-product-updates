@@ -164,14 +164,14 @@ if ( $status != 'draft' ) {
 	</div>
 	</div>
 	<?php do_action( 'edd_add_receipt_form_bottom' ); ?>
-	<div class="submit">
+	<div class="submit hide-button">
 		<input type="hidden" name="edd-action" value="edit_pup_email" />
 		<input type="hidden" name="email-id" value="<?php echo absint( $_GET['id'] ); ?>" />
 		<input type="hidden" name="edd_pup_nonce" value="<?php echo wp_create_nonce( 'edd_pup_nonce' ); ?>" />
 		<input type="hidden" name="edd_pup_tinymce_status" id="edd_pup_tinymce_status" value="<?php echo get_user_option( 'rich_editing' );?>">
 		<input type="submit" value="<?php _e( 'Save Email Changes', 'edd-pup' ); ?>" class="button-primary" />
 	</div>
-	<div class="edit-buttons">
+	<div class="edit-buttons hide-button">
 		<a href="<?php echo admin_url( 'edit.php?post_type=download&page=edd-prod-updates' ); ?>" class="button-secondary"><?php _e( 'Go Back', 'edd-pup' ); ?></a>
 	</div>
 	</div>

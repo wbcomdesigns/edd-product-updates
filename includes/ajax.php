@@ -161,7 +161,7 @@ function edd_pup_email_confirm_html(){
 						<li><strong><?php _e( 'Recipients:', 'edd-pup' ); ?></strong> <?php printf( _n( '1 customer will receive this email and have their downloads reset', '%s customers will receive this email and have their downloads reset', $customercount, 'edd-pup' ), number_format( $customercount ) ); ?></li>
 					</ul>
 					<a href="<?php echo $popup_url; ?>" id="prod-updates-email-ajax" class="button-primary button" title="<?php _e( 'Confirm and Send Emails', 'edd-pup' ); ?>" onclick="window.open(this.href,'targetWindow', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=600,height=480');return false;"><?php _e( 'Confirm and Send Emails', 'edd-pup' ); ?></a>
-					<button class="closebutton button-secondary"><?php _e( 'Close without sending', 'edd-pup' ); ?></button>
+					<button id="closebuttons" class="closebutton button-secondary" ><?php _e( 'Close without sending', 'edd-pup' ); ?></button>
 				</div>
 			</div>
 		<!-- End send email confirmation message -->
@@ -469,8 +469,8 @@ function edd_pup_ajax_send_email( $payment_id, $email_id, $test_mode = null ) {
 
 		$edd_emails = new EDD_emails();
 
-		$updated_links    = edd_pup_products_links_tag( $payment_id, null, $email_id);
-		$updated_products = edd_pup_products_tag( $payment_id, null, $email_id );
+		$updated_links    = edd_pup_products_links_tag( $payment_id, $email_id);
+		$updated_products = edd_pup_products_tag( $payment_id,  $email_id );
 
 		if( $updated_links || $updated_products ){
 			$message = str_replace( '{updated_products_links}', $updated_links, $emailpost->post_content );

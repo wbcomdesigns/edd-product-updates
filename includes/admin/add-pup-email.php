@@ -147,12 +147,12 @@ $defaultmessage  = edd_get_option( 'edd_pup_default_message', $defaultmessage );
 	</div>
 	</div>
 	<?php do_action( 'edd_add_receipt_form_bottom' ); ?>
-	<div class="submit">
+	<div class="submit hide-button">
 		<input type="hidden" name="edd-action" value="add_pup_email" />
 		<input type="hidden" name="edd_pup_nonce" value="<?php echo wp_create_nonce( 'edd_pup_nonce' ); ?>" />
 		<input type="submit" value="<?php _e( 'Save Email', 'edd-pup' ); ?>" class="button-primary" />
 	</div>
-	<div class="edit-buttons">
+	<div class="edit-buttons hide-button">
 		<a href="<?php echo admin_url( 'edit.php?post_type=download&page=edd-prod-updates' ); ?>" class="button-secondary"><?php _e( 'Go Back', 'edd-pup' ); ?></a>
 	</div>
 	</div>

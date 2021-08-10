@@ -1,3 +1,4 @@
+
 jQuery(document).ready(function ($) {
 
 		function eddPupRemoveMenus() {
@@ -8,7 +9,7 @@ jQuery(document).ready(function ($) {
 		}
 		eddPupRemoveMenus();
 		
-		$('#cboxContent .closebutton').live('click', function(){
+		$('#cboxContent .closebutton').on('click', function(){
 			$.fn.colorbox.close();
 			
 		});
@@ -348,363 +349,370 @@ jQuery(document).ready(function ($) {
 	}
 	emailConfirmRedirect();
 	
-});// End of document ready
-	
 	function eddPupAjaxEmails() {
-		
-		var $       = jQuery,
-			status  = $('.progress-status .status-text'),
-			button  = $('#edd-pup-ajax'),
+
+		var $ = jQuery,
+			status = $('.progress-status .status-text'),
+			button = $('#edd-pup-ajax'),
 			spinner = $('.edd-pup-popup-spin'),
-			action  = button.attr('data-action'),
-			clock   = $('.progress-clock'),
-			bar     = $('.progress-bar'),
-			psent   = $('.progress-sent'),
-			pperc   = $('.progress-percent'),
+			action = button.attr('data-action'),
+			clock = $('.progress-clock'),
+			bar = $('.progress-bar'),
+			psent = $('.progress-sent'),
+			pperc = $('.progress-percent'),
 			emailid = button.attr('data-email'),
-			nonce 	= $('#edd_pup_sajax_nonce').val(),
-			ogurl   = window.opener.document.location.href,
-			paused  = 0,
+			nonce = $('#edd_pup_sajax_nonce').val(),
+			ogurl = window.opener.document.location.href,
+			paused = 0,
 			i = 0,
 			it = 0,
 			data = {
 				'action': 'edd_pup_ajax_start',
-				'email_id' : emailid,
-				'iteration' : it,
-				'nonce' : nonce
+				'email_id': emailid,
+				'iteration': it,
+				'nonce': nonce
 			};
-		
-		button.click( function() {
-			
-			if ( $(this).attr('data-action') == 'pause' ) {
-	
+		button.click(function () {
+
+			if ($(this).attr('data-action') == 'pause') {
+
 				$(this).attr({
 					'data-action': 'resume',
-					value: eddPup.v3 });
+					value: eddPup.v3
+				});
 				paused++;
-				
+
 				return false;
-				
-			} else if ( $(this).attr('data-action') == 'resume' ) {
-	
+
+			} else if ($(this).attr('data-action') == 'resume') {
+
 				$(this).attr({
 					'data-action': 'pause',
-					value: eddPup.v2 });
+					value: eddPup.v2
+				});
 				clock.timer('start');
-							
-			} else if ( $(this).attr('data-action') == 'start' ) {
-			
+
+			} else if ($(this).attr('data-action') == 'start') {
+
 				$(this).prop('disabled', true);
 				spinner.show();
 				clock.timer('start');
-			
+
 			}
-			
-			$.post(ajaxurl, data).error( function() {
-			
-				alert( eddPup.a6 );
+
+			$.post(ajaxurl, data).error(function () {
+
+				alert(eddPup.a6);
 				button.prop('disabled', false).attr({
 					'data-action': 'start',
-					value: eddPup.v1 });
+					value: eddPup.v1
+				});
 				spinner.hide();
-							
-			}).success( function( ret ) {
-				
-				if ( ret == 'noncefail' ) {
-					alert( eddPup.a7 + ' Nonce failure B.');
+
+			}).success(function (ret) {
+
+				if (ret == 'noncefail') {
+					alert(eddPup.a7 + ' Nonce failure B.');
 					button.prop('disabled', false)
 					spinner.hide();
-					return false;	
+					return false;
 				}
-				
-				if ( ret == 'usersendfail' ) {
-					alert( eddPup.a11);
+
+				if (ret == 'usersendfail') {
+					alert(eddPup.a11);
 					button.prop('disabled', false);
-					if ( button.data('action') != 'start') {
-							button.attr({
+					if (button.data('action') != 'start') {
+						button.attr({
 							'data-action': 'resume',
-							value: eddPup.v3 });
-							clock.timer('pause');
+							value: eddPup.v3
+						});
+						clock.timer('pause');
 					}
 					spinner.hide();
 					return false;
 				}
-				
+
 				var r = $.parseJSON(ret),
 					p = Math.round((r.sent / r.total) * 100);
 
 				$('.progress-wrap').css('opacity', '1');
-				$('.progress-queue').text( prettyNumber(r.total) );
+				$('.progress-queue').text(prettyNumber(r.total));
 				button.prop('disabled', false).attr({
 					'data-action': 'pause',
-					value: eddPup.v2 });
+					value: eddPup.v2
+				});
 				spinner.hide();
-					
-				if ( r.status == 'restart' ) {						
-					psent.text( prettyNumber(r.sent) );
-					bar.attr('data-complete', p).css('width', p+'%');
-					pperc.text(p+'%');	
+
+				if (r.status == 'restart') {
+					psent.text(prettyNumber(r.sent));
+					bar.attr('data-complete', p).css('width', p + '%');
+					pperc.text(p + '%');
 					eddPupAjaxTrigger(i, r.sent, r.total, emailid, 0);
-					
+
 				} else {
-				
-					eddPupAjaxBuild(r, emailid, 1, 0);		
-				
+
+					eddPupAjaxBuild(r, emailid, 1, 0);
+
 				}
-				
+
 				window.opener.location.href = ogurl.replace(/&?edit_pup_email=([^&]$|[^&]*)/i, "view_pup_email");
-				
+
 			});
 		});
-		
-		function eddPupAjaxBuild( r, emailid, it, err ) {
 
-			if ( button.attr('data-action') != 'pause' ) {
+		function eddPupAjaxBuild(r, emailid, it, err) {
+
+			if (button.attr('data-action') != 'pause') {
 				clock.timer('pause');
-				status.text( eddPup.s8+prettyNumber(r.processed)+eddPup.s4 );
-				
+				status.text(eddPup.s8 + prettyNumber(r.processed) + eddPup.s4);
+
 				return false;
 			}
-			
-			if ( err == 0 ) {
-				status.text( eddPup.s3+prettyNumber(r.processed)+eddPup.s4);
+
+			if (err == 0) {
+				status.text(eddPup.s3 + prettyNumber(r.processed) + eddPup.s4);
 			} else {
-				status.text( eddPup.s5 );				
+				status.text(eddPup.s5);
 			}
-					
-			if ( +r.processed >= +r.total ) {
+
+			if (+r.processed >= +r.total) {
 				eddPupAjaxTrigger(0, r.sent, r.total, emailid, 0);
 				return false;
 			}
-			
+
 			var data = {
 				'action': 'edd_pup_ajax_start',
 				'email_id': emailid,
 				'iteration': it,
 				'processed': r.processed,
 				'status': 'processing',
-				'nonce' : nonce,
-				'error' : err
-				};
-			
-			$.post(ajaxurl, data).error( function() {	
-				
+				'nonce': nonce,
+				'error': err
+			};
+
+			$.post(ajaxurl, data).error(function () {
+
 				err++;
-				
-				status.html( eddPup.s7 );
-						
+
+				status.html(eddPup.s7);
+
 				var errsec = 14,
-					errtimer = setInterval(function() { 
-				   $('.progress-status .count').text(errsec--);
-				   if (errsec == 0) {
-				      clearInterval(errtimer);
-				   }
-				   if ( button.attr('data-action') != 'pause' ) {
-					   clearInterval(errtimer);
-					   clearTimeout(err1);
-					   eddPupAjaxTrigger();
-				   }
-				}, 1000);
-				
+					errtimer = setInterval(function () {
+						$('.progress-status .count').text(errsec--);
+						if (errsec == 0) {
+							clearInterval(errtimer);
+						}
+						if (button.attr('data-action') != 'pause') {
+							clearInterval(errtimer);
+							clearTimeout(err1);
+							eddPupAjaxTrigger();
+						}
+					}, 1000);
+
 				// Retry establishing connection up to 5 times before completely bailing out.
-				if ( err == 6 ) {
-					alert( eddPup.a5 );
+				if (err == 6) {
+					alert(eddPup.a5);
 					return false;
-				}	
-				
+				}
+
 				var err1 = setTimeout(
-							  function() 
-							  {
-								 eddPupAjaxBuild( r, emailid, it, err );
-							  }, 15000);
-	
-				
-			}).success( function( ret ) {
-				if ( err > 0 ) {
-					status.text( eddPup.s6 );
+					function () {
+						eddPupAjaxBuild(r, emailid, it, err);
+					}, 15000);
+
+
+			}).success(function (ret) {
+				if (err > 0) {
+					status.text(eddPup.s6);
 				}
-				var err = 0,		
-					r = $.parseJSON(ret);			
+				var err = 0,
+					r = $.parseJSON(ret);
 				it++;
-				if ( r.processed > 0 ) {
-					status.text( eddPup.s3+prettyNumber(r.processed)+eddPup.s4);
+				if (r.processed > 0) {
+					status.text(eddPup.s3 + prettyNumber(r.processed) + eddPup.s4);
 				}
-				
-				eddPupAjaxBuild( r, emailid, it, err );
-			});	
+
+				eddPupAjaxBuild(r, emailid, it, err);
+			});
 		}
-			
+
 		function eddPupAjaxTrigger(i, s, totalEmails, emailid, err) {
 
-			if ( button.attr('data-action') != 'pause' ) {
-					
+			if (button.attr('data-action') != 'pause') {
+
 				clock.timer('pause');
-				status.text( eddPup.s2 );
-				
+				status.text(eddPup.s2);
+
 				return false;
 			}
-							
-			if ( err == 0 ) {
-				status.text( eddPup.s1 );
+
+			if (err == 0) {
+				status.text(eddPup.s1);
 			} else {
-				status.text( eddPup.s5 );				
+				status.text(eddPup.s5);
 			}
-			
+
 			if (+s >= +totalEmails) {
 				eddPupAjaxEnd(i, s, totalEmails, emailid);
 				return false;
 			}
-			
+
 			// Add the number of emails already sent on a restart to completion status
-			if ( +i == 0 && s > 0 && paused == 0 ) {
+			if (+i == 0 && s > 0 && paused == 0) {
 				$('.success-restart-p').text(s);
 			}
-			
-			$.post(ajaxurl, {'action':'edd_pup_ajax_trigger', 'iteration': i, 'sent' : s, 'email_id' : emailid, 'errors' : err }).error( function() {
-					
+
+			$.post(ajaxurl, { 'action': 'edd_pup_ajax_trigger', 'iteration': i, 'sent': s, 'email_id': emailid, 'errors': err }).error(function () {
+
 				err++;
-				
-				status.html( eddPup.s7 );
-						
+
+				status.html(eddPup.s7);
+
 				var errsec = 14,
-					errtimer = setInterval(function() { 
-					   $('.progress-status .count').text(errsec--);
-					   if ( errsec == 0 ) {
-					      clearInterval(errtimer);
-					   }
-					   if ( button.attr('data-action') != 'pause' ) {
-						   clearInterval(errtimer);
-						   clearTimeout(err2);
-						   eddPupAjaxTrigger();
-					   }
-				}, 1000);
-				
+					errtimer = setInterval(function () {
+						$('.progress-status .count').text(errsec--);
+						if (errsec == 0) {
+							clearInterval(errtimer);
+						}
+						if (button.attr('data-action') != 'pause') {
+							clearInterval(errtimer);
+							clearTimeout(err2);
+							eddPupAjaxTrigger();
+						}
+					}, 1000);
+
 				// Retrty establishing connection up to 5 times before completely bailing out.
-				if ( err == 6 ) {
-					alert( eddPup.a4 );
+				if (err == 6) {
+					alert(eddPup.a4);
 					return false;
-				}	
-				
+				}
+
 				var err2 = setTimeout(
-							  function() 
-							  {
-							    eddPupAjaxTrigger(i, s, totalEmails, emailid, err);
-							  }, 15000);
-							
-			}).success( function(s) {
-				if ( err > 0 ) {
-					status.text( eddPup.s6 );
+					function () {
+						eddPupAjaxTrigger(i, s, totalEmails, emailid, err);
+					}, 15000);
+
+			}).success(function (s) {
+				if (err > 0) {
+					status.text(eddPup.s6);
 				}
 				var err = 0;
-				
-				if ( !$.isNumeric(s) ) {
-					
-					if ( s == 'epat_id_err' ) {
-						alert ( eddPup.a7 + ' Email ID undefined.' );
-					} else if ( s == 'epat_res_err' ) {
-						alert ( eddPup.a7 + ' MYSQL results error.' );
-					} else if ( s == 'epat_up_err' ) {
-						alert ( eddPup.a7 + ' MYSQL update error.' );			
+
+				if (!$.isNumeric(s)) {
+
+					if (s == 'epat_id_err') {
+						alert(eddPup.a7 + ' Email ID undefined.');
+					} else if (s == 'epat_res_err') {
+						alert(eddPup.a7 + ' MYSQL results error.');
+					} else if (s == 'epat_up_err') {
+						alert(eddPup.a7 + ' MYSQL update error.');
 					} else {
-						alert ( eddPup.a7 + ' Numeric failure.' );
+						alert(eddPup.a7 + ' Numeric failure.');
 					}
-					
+
 					clock.timer('pause');
-					if ( button.attr('data-action') != 'resume' ) {
+					if (button.attr('data-action') != 'resume') {
 						button.attr({
 							'data-action': 'resume',
-							value: eddPup.v3 });
+							value: eddPup.v3
+						});
 						paused++;
 					}
 					return false;
-					   
+
 				}
-				
-				function progressColor( color1, color2 ){
+
+				function progressColor(color1, color2) {
 					bar.removeClass(color1).addClass(color2);
 				};
-				
+
 				// Multiply by 99 to save the last part of the progress bar for eddPupAjaxEnd completion
 				var percent = Math.round((s / totalEmails) * 99);
-				
-					if (percent != e) {
-						psent.text(prettyNumber(s));
-						bar.attr('data-complete', percent).css('width', percent+'%');
-						pperc.text(percent+'%');
-						
-						if ( percent >= 25 && percent <= 49 ) {
-							progressColor('red','orange');
-						} else if ( percent >= 50 && percent <= 74 ) {
-							progressColor('orange','yellorange');
-						} else if ( percent >= 75 && percent <= 98 ) {
-							progressColor('yellorange', 'yellow');
-						} else if ( percent == 99 ) {
-							progressColor('yellow','green');
-						}
-						
-						var e = percent;
+
+				if (percent != e) {
+					psent.text(prettyNumber(s));
+					bar.attr('data-complete', percent).css('width', percent + '%');
+					pperc.text(percent + '%');
+
+					if (percent >= 25 && percent <= 49) {
+						progressColor('red', 'orange');
+					} else if (percent >= 50 && percent <= 74) {
+						progressColor('orange', 'yellorange');
+					} else if (percent >= 75 && percent <= 98) {
+						progressColor('yellorange', 'yellow');
+					} else if (percent == 99) {
+						progressColor('yellow', 'green');
 					}
-				
+
+					var e = percent;
+				}
+
 				i++;
-				
+
 				eddPupAjaxTrigger(i, s, totalEmails, emailid, err);
 			});
 		}
-		
-		function eddPupAjaxEnd(i,s,totalEmails, emailid){
-		
+
+		function eddPupAjaxEnd(i, s, totalEmails, emailid) {
+
 			status.text('Finishing up.');
-			
-			$.post(ajaxurl, {'action':'edd_pup_ajax_end', 'email_id' : emailid}).error( function() {
-				alert( eddPup.a8 );
-			}).success( function (response) {
+
+			$.post(ajaxurl, { 'action': 'edd_pup_ajax_end', 'email_id': emailid }).error(function () {
+				alert(eddPup.a8);
+			}).success(function (response) {
 
 				status.fadeIn('fast').text('Sending complete.');
-					
-				bar.attr('data-complete', 100).css('width', 100+'%');
-				pperc.text(100+'%');
-								
+
+				bar.attr('data-complete', 100).css('width', 100 + '%');
+				pperc.text(100 + '%');
+
 				button.prop('disabled', true).attr({
-						'data-action': 'complete',
-						value: 'Finished'});
-						
+					'data-action': 'complete',
+					value: 'Finished'
+				});
+
 				var t = clock.html().split(':'),
 					hrs = $('.success-time-h'),
 					min = $('.success-time-m'),
 					sec = $('.success-time-s');
-					restartFloor = parseInt($('.success-restart-p').text());
-				
+				restartFloor = parseInt($('.success-restart-p').text());
+
 				clock.timer('pause');
-				if ( restartFloor > 0 ) {
-					$('.success-total').text(prettyNumber(s-restartFloor));
+				if (restartFloor > 0) {
+					$('.success-total').text(prettyNumber(s - restartFloor));
 					$('.success-restart-p').text(prettyNumber(restartFloor));
 					$('.success-restart-t').text(prettyNumber(s));
 					$('.success-restart').show();
 				} else {
-					$('.success-total').text(prettyNumber(s));					
+					$('.success-total').text(prettyNumber(s));
 				}
-				
-				if ( t.length > 2 ) {
-					hrs.show().text( parseInt(t[0]) + ' hr.');
-					min.show().text( parseInt(t[1]) + ' min.');
-					sec.text( parseInt(t[2]) + ' sec.');					
+
+				if (t.length > 2) {
+					hrs.show().text(parseInt(t[0]) + ' hr.');
+					min.show().text(parseInt(t[1]) + ' min.');
+					sec.text(parseInt(t[2]) + ' sec.');
 				} else {
-				
-					if ( t[0] > 0 ) {
-						min.show().text( parseInt(t[0]) + ' min.');
+
+					if (t[0] > 0) {
+						min.show().text(parseInt(t[0]) + ' min.');
 					}
-					sec.text( parseInt(t[1]) + ' sec.');					
+					sec.text(parseInt(t[1]) + ' sec.');
 				}
-				
+
 				$('#completion').show();
-				
-				if ( window.opener && !window.opener.closed ) {
+
+				if (window.opener && !window.opener.closed) {
 					window.opener.location.reload();
 				}
 			});
 		}
-		
+
 	} // end of eddPupAjaxEmails()
+
+	eddPupAjaxEmails();
+});// End of document ready
+	
+	
 
 	function prettyNumber(x) {
 	    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

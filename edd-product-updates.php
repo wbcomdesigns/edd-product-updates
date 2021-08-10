@@ -219,10 +219,14 @@ if( !class_exists( 'EDD_Product_Updates' ) ) {
 		    wp_register_script( 'edd-pup-js', plugin_dir_url( __FILE__ ). 'assets/js/edd-pup.min.js', false, EDD_Product_Updates_VER );
 		    wp_enqueue_script( 'edd-pup-js' );
 		    wp_localize_script( 'edd-pup-js', 'eddPup', $l18njs );
+            wp_register_script( 'colorbox-js', plugin_dir_url( __FILE__ ). 'assets/js/jquery.colorbox-min.js', false, EDD_Product_Updates_VER );
+			wp_enqueue_script( 'colorbox-js' );
 
 			// Plugin CSS
 		    wp_register_style( 'edd-pup-css', plugin_dir_url( __FILE__ ). 'assets/css/edd-pup.min.css', false, EDD_Product_Updates_VER );
 		    wp_enqueue_style( 'edd-pup-css' );
+			wp_register_style( 'colorbox-css', plugin_dir_url( __FILE__ ). 'assets/css/colorbox.css', false, EDD_Product_Updates_VER );
+		    wp_enqueue_style( 'colorbox-css' );
 		}
 
         /**
